@@ -25,6 +25,33 @@ INSERT INTO events VALUES (10,'100m',2016, 'Charles','Dennis','Susana');
 INSERT INTO events VALUES (11,'200m',2016, 'jessica','Donald','Stefeney');
 INSERT INTO events VALUES (12,'500m',2016,'Thomas','Steven','Catherine');
 
-COMMIT;
+-- Question: Write a query to find no of gold medal per swimmer for swimmer who won only gold medals
 
-SELECT * FROM events;
+-- Method1 - Sub Query
+SELECT 
+  gold AS player_name, 
+  COUNT(1) AS no_of_gold_medals 
+FROM 
+  events 
+WHERE 
+  gold NOT IN (
+    SELECT silver 
+    FROM events 
+    UNION
+    SELECT bronze 
+    FROM events) 
+GROUP BY 
+  gold;
+  
+-- Method2 - Having + CTE
+WITH cte AS (
+SELECT gold AS player_name, 'gold' AS medal_type FROM events
+UNION ALL
+SELECT silver, 'silver' AS medal_type FROM events
+UNION ALL
+SELECT bronze, 'bronze' AS medal_type FROM events)
+SELECT player_name, COUNT(1) AS no_of_gold_medals
+FROM cte
+GROUP BY player_name
+HAVING COUNT(DISTINCT medal_type) =  1 AND MAX(medal_type) = 'gold';
+
