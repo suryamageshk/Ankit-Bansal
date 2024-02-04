@@ -27,7 +27,7 @@ INSERT INTO events VALUES (12,'500m',2016,'Thomas','Steven','Catherine');
 
 -- Question: Write a query to find no of gold medal per swimmer for swimmer who won only gold medals
 
--- Method1 - Sub Query
+-- Method 1 - Sub Query
 SELECT 
   gold AS player_name, 
   COUNT(1) AS no_of_gold_medals 
@@ -43,7 +43,7 @@ WHERE
 GROUP BY 
   gold;
   
--- Method2 - Having + CTE
+-- Method 2 - Having + CTE
 WITH cte AS (
 SELECT gold AS player_name, 'gold' AS medal_type FROM events
 UNION ALL
