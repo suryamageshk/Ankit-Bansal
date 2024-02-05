@@ -26,7 +26,7 @@ INSERT INTO holidays VALUES
 
 -- Question: Write a sql to find business day between create date and resolved date by excluding weekends and public holidays
 
--- Method 1 - 
+-- Method 1 
 WITH c1 AS (
   SELECT 
     *, 
