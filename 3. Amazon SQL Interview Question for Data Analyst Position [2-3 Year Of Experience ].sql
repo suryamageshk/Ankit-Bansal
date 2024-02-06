@@ -33,7 +33,7 @@ WITH cte AS (
     emp_id
 ) 
 SELECT 
-  COUNT(emp_id) 
+  COUNT(emp_id) AS No_of_people_presents
 FROM 
   cte 
 WHERE 
@@ -41,5 +41,61 @@ WHERE
   OR outtime IS NULL;
 
 -- Method 2: Joins
+WITH intime AS(
+  SELECT 
+    emp_id, 
+    MAX(time) AS latest_in_time 
+  FROM 
+    hospital 
+  WHERE 
+    action = 'in' 
+  GROUP BY 
+    emp_id
+), 
+outtime AS (
+  SELECT 
+    emp_id, 
+    MAX(time) AS latest_out_time 
+  FROM 
+    hospital 
+  WHERE 
+    action = 'out' 
+  GROUP BY 
+    emp_id
+) 
+SELECT 
+  COUNT(1) 
+FROM 
+  intime 
+  LEFT JOIN outtime ON intime.emp_id = outtime.emp_id 
+WHERE 
+  latest_in_time > latest_out_time 
+  OR latest_out_time IS NULL;
 
--- Method 3:
+-- Method 3: 
+WITH latest_time AS (
+  SELECT 
+    emp_id, 
+    MAX(time) AS max_latest_time 
+  FROM 
+    hospital 
+  GROUP BY 
+    emp_id
+), 
+latest_in_time AS (
+  SELECT 
+    emp_id, 
+    MAX(time) AS max_latest_in_time 
+  FROM 
+    hospital 
+  WHERE 
+    action = 'in' 
+  GROUP BY 
+    emp_id
+) 
+SELECT 
+  COUNT(1)
+FROM 
+  latest_time lt 
+  INNER JOIN latest_in_time lit ON lt.emp_id = lit.emp_id 
+  AND max_latest_time = max_latest_in_time;
